@@ -1,0 +1,10 @@
+pandas
+numpy
+fasttext
+fastapi
+uvicorn
+openpyxl
+scipy
+scikit-learn
+requests
+tqdm

@@ -16,7 +16,6 @@ import fasttext
 import fasttext.util
 from pydantic import BaseModel
 from typing import List, Tuple
-import fasttext
 import requests
 from tqdm import tqdm
 import os

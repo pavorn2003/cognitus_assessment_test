@@ -25,13 +25,12 @@ model_url = "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin
 model_path = "cc.en.300.bin.gz"
 extracted_model_path = "cc.en.300.bin"
 
-if os.path.exists(model_path):
+if os.path.exists(model_path) or os.path.exists(extracted_model_path):
     print(f"File already exists at {model_path}")
 else:
     response = requests.get(model_url, stream=True)
     total_size = int(response.headers.get('content-length', 0))
 
-    # Download the file with progress bar
     with open(model_path, 'wb') as f, tqdm(
         desc=model_path,
         total=total_size,
@@ -123,7 +122,6 @@ def detect_outlier(df):
         print(e)
         raise Exception("Error in Detect Outliers")
     
-
 def detect_null(df):
     try:
         nulls = []

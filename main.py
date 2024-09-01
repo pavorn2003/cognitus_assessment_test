@@ -19,6 +19,7 @@ from typing import List, Tuple
 import requests
 from tqdm import tqdm
 import os
+from collections import Counter
 
 model_url = "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin.gz"
 model_path = "cc.en.300.bin.gz"
@@ -77,6 +78,15 @@ ft = fasttext.load_model('cc.en.300.bin')
 # model = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True)
 
 
+def check_length_consistency(values, threshold=0.80):
+    lengths = [len(value) for value in values]
+    length_counts = Counter(lengths)
+    total_values = len(values)
+    most_common_length, most_common_count = length_counts.most_common(1)[0]
+    percentage = most_common_count / total_values
+    
+    return percentage >= threshold
+
 def get_sheetnames_xlsx(filepath):
     wb = load_workbook(filepath, read_only=True, keep_links=False)
     return wb.sheetnames
@@ -132,13 +142,12 @@ def detect_odd_one_out(df,model):
     try:
         onos = []
         for i,column in enumerate(df.columns):
-            if i == 0:continue
             if not is_numeric_dtype(df[column]):
                 words = list(df[column])
                 # words = [word.replace(" ","") for word in words]
                 word_vectors = [model[word] for word in words if word in model]
                 # print(len(word_vectors) , len(words))
-                if len(word_vectors) < len(words)/2:
+                if check_length_consistency(words):
                     print("Using Isolation Forest")
                     features = np.array([extract_features(word) for word in words])
                     iso_model = IsolationForest(contamination=0.25)  # Adjust contamination as needed

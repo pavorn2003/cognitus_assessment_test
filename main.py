@@ -141,12 +141,16 @@ def detect_odd_one_out(df,model):
     
     try:
         onos = []
+        print(df)
         for i,column in enumerate(df.columns):
+            print(column)
+            print(df[column])
             if not is_numeric_dtype(df[column]):
-                words = list(df[column])
+                words = [word for word in list(df[column]) if type(word) == str]
                 # words = [word.replace(" ","") for word in words]
                 word_vectors = [model[word] for word in words if word in model]
                 # print(len(word_vectors) , len(words))
+                # print(words)
                 if check_length_consistency(words):
                     print("Using Isolation Forest")
                     features = np.array([extract_features(word) for word in words])
@@ -186,7 +190,7 @@ def detect_odd_one_out(df,model):
                             onos.append(tuple((int(j+1),int(i)))) 
 
                 print(f"The odd one out is: {odd_one_out_words}")
-                return onos
+        return onos
     except Exception as e:
         print(e)
         raise Exception("Error in Detect Odd ones out.")
